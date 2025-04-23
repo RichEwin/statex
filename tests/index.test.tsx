@@ -25,29 +25,29 @@ describe('counterStore', () => {
     counterStore = createStore(initialState, createCounterActions);
   });
 
-  it('should initialize with count 0', () => {
+  it('1) should initialize with count 0', () => {
     expect(counterStore.getState().count).toBe(0);
   });
 
-  it('should increment the count', () => {
+  it('2) should increment the count', () => {
     counterStore.increment();
     expect(counterStore.getState().count).toBe(1);
   });
 
-  it('should decrement the count', () => {
+  it('3) should decrement the count', () => {
     counterStore.increment();
     counterStore.decrement();
     expect(counterStore.getState().count).toBe(0);
   });
 
-  it('should reset the count to 0', () => {
+  it('4) should reset the count to 0', () => {
     counterStore.increment();
     counterStore.increment();
     counterStore.reset();
     expect(counterStore.getState().count).toBe(0);
   });
 
-  it('should notify subscribers on state change', () => {
+  it('5) should notify subscribers on state change', () => {
     let called = false;
     const unsubscribe = counterStore.subscribe(() => {
       called = true;

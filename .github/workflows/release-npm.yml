@@ -1,0 +1,48 @@
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+name: Release and Publish to NPM
+
+jobs:
+  release-package:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - name: Run Release Please
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          changelog-types: '[{"type": "feat", "section": "Features", "hidden": false},{"type": "fix", "section": "Bug Fixes", "hidden": false},{"type": "perf", "section": "Performance", "hidden": false},{"type": "refactor", "section": "Refactoring", "hidden": false},{"type": "chore", "section": "Miscellaneous", "hidden": false},{"type": "build", "section": "Miscellaneous", "hidden": false},{"type": "deps", "section": "Dependencies", "hidden": false},{"type": "docs", "section": "Documentations", "hidden": false}]'
+          release-type: node
+          package-name: "@rewin/statex"
+          bump-minor-pre-major: true
+
+      - name: Checkout
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm install
+
+      - name: Running test suite
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm test
+
+      - name: Publish to NPM
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
+          npm publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
