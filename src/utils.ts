@@ -11,7 +11,7 @@ import { useSyncExternalStore } from "react";
  * @returns {{ getState: () => State; setState: (state: State) => void; subscribe: (listener: () => void) => () => void } & Actions}
  *   The store object with state handlers and the custom actions.
  */
-export const createStore = <
+export function createStore<
   State,
   Actions extends Record<string, (...args: any[]) => void>
 >(
@@ -20,7 +20,7 @@ export const createStore = <
     getState: () => State;
     setState: (state: State) => void;
   }) => Actions
-) => {
+) {
   let state = initialState;
   const listeners = new Set<() => void>();
 
@@ -43,7 +43,7 @@ export const createStore = <
     ...store,
     ...actions,
   };
-};
+}
 
 /**
  * Creates a hook to use the store in a React component with optional selector.
@@ -54,16 +54,20 @@ export const createStore = <
  * @returns {<T>(selector?: (state: State) => T) => T}
  *   A React hook that returns the selected state.
  */
-export const createUseStore = <State>(
+export function createUseStore<State>(
   store: {
     getState: () => State;
     subscribe: (listener: () => void) => () => void;
     getServerSnapshot: () => State;
   }
-) => {
-  return function useBoundStore<T extends State>(
+) {
+  return function useBoundStore<T extends State = State>(
     selector: (state: State) => T = (state) => state as unknown as T
-  ) {
-    return useSyncExternalStore(store.subscribe, () => selector(store.getState()), () => store.getServerSnapshot());
+  ): T {
+    return useSyncExternalStore(
+      store.subscribe,
+      () => selector(store.getState()),
+      () => selector(store.getServerSnapshot())
+    );
   };
-};
+}
