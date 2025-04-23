@@ -26,44 +26,64 @@ npm install @rewin/statex
 
 ## 🧪 Example Usage
 
-Create a store
+Initialize the counter state, define actions, create the store, and export hooks/utilities.
 
 ```
-// store/counter.ts
 import { createStore, createUseStore } from '@rewin/statex';
 
-const counterStore = createStore(
-  { count: 0 },
-  ({ getState, setState }) => ({
-    increment: () => {
-      const { count } = getState();
-      setState({ count: count + 1 });
-    },
-    reset: () => setState({ count: 0 }),
-  })
-);
+type CreateCounterActions = {
+  getState: () => typeof initialState;
+  setState: (state: typeof initialState) => void;
+};
+
+const initialState = { count: 0 };
+
+const createCounterActions = ({ getState, setState }: CreateCounterActions) => ({
+  increment: () => {
+    const { count } = getState();
+    setState({ count: count + 1 });
+  },
+  decrement: () => {
+    const { count } = getState();
+    setState({ count: count - 1 });
+  },
+  reset: () => setState({ count: 0 }),
+});
+
+const counterStore = createStore(initialState, createCounterActions);
 
 export const useCounter = createUseStore(counterStore);
 export const { increment, reset } = counterStore;
 ```
 
-Access the store
+Import and use counter actions in a client-side component.
 
 ```
-'use client';
+"use client"
 
-import { useCounter, increment, reset } from '@/store/counter';
+import { increment, reset } from "../store/counter";
 
-export default function Counter() {
-  const { count } = useCounter((state) => state);
+export function ClientComponentA() {
+    return (
+      <div>
+        <button onClick={increment}>+</button>
+        <button onClick={reset}>Reset</button>
+      </div>
+    );
+}
+```
 
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={increment}>+</button>
-      <button onClick={reset}>Reset</button>
-    </div>
-  );
+Import and consume the counter state in a client-side component.
+
+```
+"use client"
+
+import { useCounter } from "@/store/counter"
+
+export function ClientComponentB() {
+    const {count} = useCounter((state) => state)
+
+    return (<div>{count}</div>)
 }
 ```
 
@@ -72,8 +92,6 @@ export default function Counter() {
 This is not persistent—state resets on refresh unless you wire in localStorage or similar.
 
 Designed for client-side usage.
-
-Selectors help reduce unnecessary re-renders—use them!
 
 🧱 Built With
 
