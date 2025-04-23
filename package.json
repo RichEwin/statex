@@ -1,0 +1,42 @@
+{
+    "name": "@rewin/statex",
+    "version": "1.0.0",
+    "description": "Creates a client store using react’s useSyncExternalStore()",
+    "homepage": "https://github.com/RichEwin/statex",
+    "bugs": {
+        "url": "https://github.com/RichEwin/statex/issues"
+    },
+    "author": "rich ewin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RichEwin/statex.git"
+    },
+    "files": [
+        "dist"
+    ],
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+        "lint": "tsc"
+    },
+    "compilerOptions": {
+        "lib": ["es2022"]
+    },
+    "type": "module",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "import": "./dist/index.js",
+            "default": "./dist/index.cjs"
+        }
+    },
+    "license": "MIT",
+    "dependencies": {
+        "react": "^19.1.0"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "^0.17.4",
+        "typescript": "^5.8.3"
+    }
+}
