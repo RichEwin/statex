@@ -36,8 +36,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "react": "^19.1.0",
-        "release-please": "^17.0.0"
+        "react": "^19.1.0"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.17.4",
