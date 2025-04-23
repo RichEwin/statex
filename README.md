@@ -55,7 +55,7 @@ Access the store
 import { useCounter, increment, reset } from '@/store/counter';
 
 export default function Counter() {
-  const count = useCounter((s) => s.count);
+  const { count } = useCounter((state) => state);
 
   return (
     <div>

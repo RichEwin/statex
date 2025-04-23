@@ -12,7 +12,7 @@ import { useSyncExternalStore } from "react";
  *   The store object with state handlers and the custom actions.
  */
 export const createStore = <
-  State, 
+  State,
   Actions extends Record<string, (...args: any[]) => void>
 >(
   initialState: State,
@@ -34,6 +34,7 @@ export const createStore = <
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
+    getServerSnapshot: () => state,
   };
 
   const actions = createActions(store);
@@ -57,11 +58,12 @@ export const createUseStore = <State>(
   store: {
     getState: () => State;
     subscribe: (listener: () => void) => () => void;
+    getServerSnapshot: () => State;
   }
 ) => {
-  return function useBoundStore<T>(
+  return function useBoundStore<T extends State>(
     selector: (state: State) => T = (state) => state as unknown as T
   ) {
-    return useSyncExternalStore(store.subscribe, () => selector(store.getState()));
+    return useSyncExternalStore(store.subscribe, () => selector(store.getState()), () => store.getServerSnapshot());
   };
 };
