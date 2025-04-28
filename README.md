@@ -29,31 +29,34 @@ npm install @rewin/statex
 Initialize the counter state, define actions, create the store, and export hooks/utilities.
 
 ```
+'use client'
+
 import { createStore, createUseStore } from '@rewin/statex';
 
-type CreateCounterActions = {
-  getState: () => typeof initialState;
-  setState: (state: typeof initialState) => void;
+type State = {
+  count: number;
 };
 
-const initialState = { count: 0 };
+const initialState: State = { count: 0 };
 
-const createCounterActions = ({ getState, setState }: CreateCounterActions) => ({
-  increment: () => {
-    const { count } = getState();
-    setState({ count: count + 1 });
-  },
-  decrement: () => {
-    const { count } = getState();
-    setState({ count: count - 1 });
-  },
-  reset: () => setState({ count: 0 }),
-});
-
-const counterStore = createStore(initialState, createCounterActions);
+const counterStore = createStore(
+    initialState,
+    ({ getState, setState }) => ({
+        increment: () => {
+            const { count } = getState();
+            setState({ count: count + 1 });
+        },
+        decrement: () => {
+            const { count } = getState();
+            setState({count: count - 1})
+        },
+        reset: () => setState({ count: 0 })
+    }),
+  );
 
 export const useCounter = createUseStore(counterStore);
-export const { increment, reset } = counterStore;
+
+export const { getState, increment, reset } = counterStore;
 ```
 
 Import and use counter actions in a client-side component.
@@ -61,29 +64,18 @@ Import and use counter actions in a client-side component.
 ```
 "use client"
 
-import { increment, reset } from "../store/counter";
+import {  increment, reset, useCounter } from "./store/counter.store";
 
-export function ClientComponentA() {
+export default function ClientComponent3() {
+    const { count } = useCounter()
+
     return (
       <div>
         <button onClick={increment}>+</button>
         <button onClick={reset}>Reset</button>
+        <p>{count}</p>
       </div>
     );
-}
-```
-
-Import and consume the counter state in a client-side component.
-
-```
-"use client"
-
-import { useCounter } from "@/store/counter"
-
-export function ClientComponentB() {
-    const {count} = useCounter((state) => state)
-
-    return (<div>{count}</div>)
 }
 ```
 
