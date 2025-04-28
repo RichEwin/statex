@@ -1,6 +1,6 @@
 {
     "name": "@rewin/statex",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Creates a client store using react’s useSyncExternalStore()",
     "homepage": "https://github.com/RichEwin/statex",
     "bugs": {
